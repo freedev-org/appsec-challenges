@@ -40,7 +40,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         answerDivider: document.getElementById('answer-divider'),
         answerFeedback: document.getElementById('answer-feedback'),
         submitAnswer: document.getElementById('submit-answer'),
-        skipChallenge: document.getElementById('skip-challenge')
+        skipChallenge: document.getElementById('skip-challenge'),
+        explanationModal: document.getElementById('explanation-modal'),
+        explanationModalBody: document.getElementById('explanation-modal-body'),
+        closeExplanationModal: document.getElementById('close-explanation-modal'),
+        explanationModalDone: document.getElementById('explanation-modal-done')
     };
 
     let challengesByDifficulty = {};
@@ -85,12 +89,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.warn('Não foi possível salvar o estado atual:', error);
         }
-    }
-
-    function updateChallengeUrl(challenge) {
-        const url = new URL(window.location.href);
-        url.hash = challenge.id;
-        window.history.replaceState(window.history.state, '', url);
     }
 
     async function copyChallengeLink() {
@@ -260,6 +258,72 @@ document.addEventListener('DOMContentLoaded', async () => {
                     : 'fa-regular fa-circle status';
             }
         });
+    }
+
+    /**
+     * Converte a sintaxe de markup dos campos description e explanation em nós DOM.
+     * O conteúdo original é tratado como texto; somente os links gerados são HTML.
+     */
+    function renderMarkup(container, source) {
+        container.replaceChildren();
+
+        const text = String(source || '');
+        const tokenPattern = /#CWE-(\d+)|owasp\{(A\d{2}):(\d{4})\s+([^}]+)\}|\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/gi;
+        let lastIndex = 0;
+        let match;
+
+        function appendText(value) {
+            if (value) container.appendChild(document.createTextNode(value));
+        }
+
+        while ((match = tokenPattern.exec(text)) !== null) {
+            appendText(text.slice(lastIndex, match.index));
+
+            const link = document.createElement('a');
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+
+            if (match[1]) {
+                link.href = `https://cwe.mitre.org/data/definitions/${match[1]}.html`;
+                link.textContent = `CWE-${match[1]}`;
+            } else if (match[2]) {
+                const code = match[2].toUpperCase();
+                const year = match[3];
+                const title = match[4].trim();
+                const slug = `${code}_${year}-${title.replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_|_$/g, '')}`;
+                link.href = year === '2025'
+                    ? `https://owasp.org/Top10/2025/${slug}/`
+                    : `https://owasp.org/Top10/${slug}/`;
+                link.textContent = `${code}:${year} ${title}`;
+            } else {
+                const article = match[5].trim();
+                link.href = `https://pt.wikipedia.org/wiki/${encodeURIComponent(article.replace(/ /g, '_'))}`;
+                link.textContent = (match[6] || article).trim();
+            }
+
+            const externalIcon = document.createElement('i');
+            externalIcon.className = 'fa-solid fa-arrow-up-right-from-square markup-external-link-icon';
+            externalIcon.setAttribute('aria-hidden', 'true');
+            link.appendChild(externalIcon);
+
+            container.appendChild(link);
+            lastIndex = tokenPattern.lastIndex;
+        }
+
+        appendText(text.slice(lastIndex));
+    }
+
+    function showExplanation() {
+        if (!currentChallenge) return;
+
+        renderMarkup(elements.explanationModalBody, currentChallenge.explanation || 'Nenhuma explicação foi cadastrada para este desafio.');
+        elements.explanationModal.hidden = false;
+        elements.closeExplanationModal.focus();
+    }
+
+    function closeExplanation() {
+        elements.explanationModal.hidden = true;
+        elements.submitAnswer.focus();
     }
 
     function setFeedback(message, kind = 'info') {
@@ -643,7 +707,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentChallenge = challenge;
         selectedLine = null;
         resetShareFeedback();
-        updateChallengeUrl(challenge);
         saveOpenState(preferredFileName);
 
         updateActiveNavigation();
@@ -651,7 +714,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         elements.breadcrumbTitle.textContent = challenge.title;
         elements.title.textContent = challenge.title;
-        elements.description.textContent = challenge.description || '';
+        renderMarkup(elements.description, challenge.description || '');
         elements.language.textContent = challenge.language || '';
         elements.editorLanguage.textContent = challenge.language || '';
         elements.editorFooterLanguage.textContent = challenge.language || '';
@@ -733,6 +796,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateActiveNavigation();
 
             setFeedback('Resposta correta! Desafio concluído.', 'success');
+            showExplanation();
 
             return true;
         }
@@ -838,6 +902,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     elements.shareButton.addEventListener('click', copyChallengeLink);
     elements.submitAnswer.addEventListener('click', checkAnswer);
     elements.skipChallenge.addEventListener('click', skipChallenge);
+    elements.closeExplanationModal.addEventListener('click', closeExplanation);
+    elements.explanationModalDone.addEventListener('click', closeExplanation);
+    elements.explanationModal.addEventListener('click', (event) => {
+        if (event.target.matches('[data-close-modal]')) closeExplanation();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !elements.explanationModal.hidden) closeExplanation();
+    });
 
     elements.editorBody.addEventListener('click', (event) => {
         if (!currentChallenge || currentChallenge.type !== 'line') {

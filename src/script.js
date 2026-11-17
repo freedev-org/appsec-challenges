@@ -85,6 +85,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    function updateChallengeUrl(challenge) {
+        const url = new URL(window.location.href);
+        url.hash = challenge.id;
+        window.history.replaceState(window.history.state, '', url);
+    }
+
+    function getChallengeFromUrl(challenges) {
+        if (!window.location.hash) return null;
+
+        let challengeId;
+
+        try {
+            challengeId = decodeURIComponent(window.location.hash.slice(1));
+        } catch {
+            return null;
+        }
+
+        return challenges.find((challenge) => challenge.id === challengeId) || null;
+    }
+
     function loadProgress() {
         try {
             const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -572,6 +592,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentDifficulty = difficulty;
         currentChallenge = challenge;
         selectedLine = null;
+        updateChallengeUrl(challenge);
         saveOpenState(preferredFileName);
 
         updateActiveNavigation();
@@ -837,11 +858,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Um ID válido na URL tem prioridade sobre o desafio salvo no localStorage.
+        const urlChallenge = getChallengeFromUrl(allChallenges);
         const savedChallenge = savedOpenState
             ? allChallenges.find((challenge) => challenge.id === savedOpenState.challengeId)
             : null;
 
-        const initialChallenge = savedChallenge || allChallenges[0];
+        const initialChallenge = urlChallenge || savedChallenge || allChallenges[0];
 
         const initialDifficulty = Object.keys(challengesByDifficulty).find(
             (difficulty) => (challengesByDifficulty[difficulty] || []).some(
@@ -849,10 +872,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             )
         );
 
+        const preferredFileName = savedChallenge
+            && (!urlChallenge || urlChallenge.id === savedChallenge.id)
+            ? savedOpenState.fileName
+            : null;
+
         selectChallenge(
             initialDifficulty,
             initialChallenge,
-            savedChallenge ? savedOpenState.fileName : null
+            preferredFileName
         );
 
     } catch (error) {

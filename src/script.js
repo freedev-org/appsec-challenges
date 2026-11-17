@@ -43,19 +43,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     let challengesByDifficulty = {};
     let allChallenges = [];
     let currentChallenge = null;
+    let currentDifficulty = null;
     let selectedLine = null;
     let currentFiles = [];
+    let activeFileIndex = 0;
     let progress = loadProgress();
 
     function loadProgress() {
         try {
-            const stored = JSON.parse(
-                localStorage.getItem(STORAGE_KEY) || '{}'
-            );
-
-            return stored && typeof stored === 'object' && !Array.isArray(stored)
-                ? stored
-                : {};
+            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
         } catch {
             return {};
         }
@@ -72,14 +69,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateProgress() {
         const completed = allChallenges.filter(isCompleted).length;
         const total = allChallenges.length;
-        const percentage = total
-            ? Math.round((completed / total) * 100)
-            : 0;
+        const percentage = total ? Math.round((completed / total) * 100) : 0;
 
         elements.progressCount.textContent = `${completed}/${total}`;
         elements.progressValue.style.width = `${percentage}%`;
-        elements.progressDescription.textContent =
-            `${percentage}% dos desafios concluídos`;
+        elements.progressDescription.textContent = `${percentage}% dos desafios concluídos`;
     }
 
     function createIcon(className) {
@@ -93,7 +87,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         Object.entries(difficultyInfo).forEach(([difficulty, info]) => {
             const challenges = challengesByDifficulty[difficulty] || [];
-
             const group = document.createElement('div');
             group.className = 'difficulty-group';
 
@@ -129,7 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 title.textContent = challenge.title;
                 item.appendChild(title);
 
-                if (currentChallenge?.id === challenge.id) {
+                if (currentChallenge && currentChallenge.id === challenge.id) {
                     item.classList.add('active');
                 }
 
@@ -137,10 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     item.classList.add('completed');
                 }
 
-                item.addEventListener('click', () => {
-                    selectChallenge(difficulty, challenge);
-                });
-
+                item.addEventListener('click', () => selectChallenge(difficulty, challenge));
                 group.appendChild(item);
             });
 
@@ -149,31 +139,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function updateActiveNavigation() {
-        elements.challengeList
-            .querySelectorAll('.challenge-item')
-            .forEach((item) => {
-                const active = currentChallenge
-                    && item.dataset.challengeId === currentChallenge.id;
+        elements.challengeList.querySelectorAll('.challenge-item').forEach((item) => {
+            const active = currentChallenge && item.dataset.challengeId === currentChallenge.id;
+            item.classList.toggle('active', Boolean(active));
 
-                item.classList.toggle('active', Boolean(active));
+            const challenge = allChallenges.find((entry) => entry.id === item.dataset.challengeId);
+            item.classList.toggle('completed', Boolean(challenge && isCompleted(challenge)));
 
-                const challenge = allChallenges.find(
-                    (entry) => entry.id === item.dataset.challengeId
-                );
+            const icon = item.querySelector('.status');
 
-                item.classList.toggle(
-                    'completed',
-                    Boolean(challenge && isCompleted(challenge))
-                );
-
-                const icon = item.querySelector('.status');
-
-                if (icon && challenge) {
-                    icon.className = isCompleted(challenge)
-                        ? 'fa-solid fa-circle-check status'
-                        : 'fa-regular fa-circle status';
-                }
-            });
+            if (icon && challenge) {
+                icon.className = isCompleted(challenge)
+                    ? 'fa-solid fa-circle-check status'
+                    : 'fa-regular fa-circle status';
+            }
+        });
     }
 
     function setFeedback(message, kind = 'info') {
@@ -188,29 +168,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const text = document.createElement('span');
         text.textContent = message;
-
         elements.answerFeedback.appendChild(text);
 
-        elements.answerFeedback.classList.toggle(
-            'feedback-success',
-            kind === 'success'
-        );
-
-        elements.answerFeedback.classList.toggle(
-            'feedback-error',
-            kind === 'error'
-        );
+        elements.answerFeedback.classList.toggle('feedback-success', kind === 'success');
+        elements.answerFeedback.classList.toggle('feedback-error', kind === 'error');
     }
 
     function clearAnswerState() {
         selectedLine = null;
         elements.textAnswer.value = '';
 
-        elements.answerOptions
-            .querySelectorAll('input[type="radio"]')
-            .forEach((radio) => {
-                radio.checked = false;
-            });
+        elements.answerOptions.querySelectorAll('input[type="radio"]').forEach((radio) => {
+            radio.checked = false;
+        });
 
         renderSelectedLine();
         setFeedback('Revise sua resposta antes de enviar.');
@@ -253,7 +223,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const empty = document.createElement('div');
             empty.className = 'empty-selection';
             empty.textContent = 'Nenhuma linha selecionada.';
-
             elements.selectedLines.appendChild(empty);
             return;
         }
@@ -275,16 +244,177 @@ document.addEventListener('DOMContentLoaded', async () => {
         const normalized = String(language || '').toLowerCase();
 
         if (normalized === 'python') return 'fa-brands fa-python';
-        if (normalized === 'javascript' || normalized === 'js') {
-            return 'fa-brands fa-js';
-        }
-        if (normalized === 'typescript' || normalized === 'ts') {
-            return 'fa-brands fa-js';
-        }
+        if (normalized === 'javascript' || normalized === 'js') return 'fa-brands fa-js';
+        if (normalized === 'typescript' || normalized === 'ts') return 'fa-brands fa-js';
         if (normalized === 'html') return 'fa-brands fa-html5';
         if (normalized === 'css') return 'fa-brands fa-css3-alt';
 
         return 'fa-solid fa-file-code';
+    }
+
+    function getHighlightLanguage(fileName) {
+        const extension = String(fileName).split('.').pop().toLowerCase();
+
+        const languages = {
+            py: 'python',
+            pyw: 'python',
+            js: 'javascript',
+            mjs: 'javascript',
+            cjs: 'javascript',
+            jsx: 'javascript',
+            ts: 'typescript',
+            tsx: 'typescript',
+            html: 'xml',
+            htm: 'xml',
+            xhtml: 'xml',
+            xml: 'xml',
+            svg: 'xml',
+            css: 'css',
+            scss: 'scss',
+            less: 'less',
+            json: 'json',
+            jsonc: 'json',
+            sql: 'sql',
+            java: 'java',
+            c: 'c',
+            h: 'c',
+            cc: 'cpp',
+            cpp: 'cpp',
+            cxx: 'cpp',
+            hpp: 'cpp',
+            cs: 'csharp',
+            go: 'go',
+            rs: 'rust',
+            php: 'php',
+            rb: 'ruby',
+            sh: 'bash',
+            bash: 'bash',
+            zsh: 'bash',
+            yml: 'yaml',
+            yaml: 'yaml',
+            toml: 'ini',
+            ini: 'ini',
+            md: 'markdown',
+            markdown: 'markdown',
+            dockerfile: 'dockerfile'
+        };
+
+        if (languages[extension]) return languages[extension];
+
+        // Fallback para arquivos sem extensão reconhecida, usando language do desafio.
+        const challengeLanguage = String(currentChallenge?.language || '').toLowerCase();
+
+        const fallback = {
+            python: 'python',
+            javascript: 'javascript',
+            js: 'javascript',
+            typescript: 'typescript',
+            html: 'xml',
+            xml: 'xml',
+            css: 'css',
+            sql: 'sql',
+            java: 'java',
+            c: 'c',
+            cpp: 'cpp',
+            'c++': 'cpp',
+            csharp: 'csharp',
+            'c#': 'csharp',
+            go: 'go',
+            rust: 'rust',
+            php: 'php',
+            ruby: 'ruby',
+            shell: 'bash',
+            bash: 'bash'
+        };
+
+        return fallback[challengeLanguage] || null;
+    }
+
+    function highlightSource(source, language) {
+        if (!language || !window.hljs || !hljs.getLanguage(language)) {
+            return null;
+        }
+
+        try {
+            return hljs.highlight(source, {
+                language,
+                ignoreIllegals: true
+            }).value;
+        } catch (error) {
+            console.warn(`Falha ao aplicar syntax highlight (${language}):`, error);
+            return null;
+        }
+    }
+
+    function splitHighlightedHtml(highlightedHtml) {
+        const template = document.createElement('template');
+        template.innerHTML = highlightedHtml;
+
+        const lines = [document.createDocumentFragment()];
+
+        function appendText(text, ancestors) {
+            if (!text) return;
+
+            let parent = lines[lines.length - 1];
+            let root = null;
+
+            ancestors.forEach((ancestor) => {
+                const clone = ancestor.cloneNode(false);
+
+                if (parent === lines[lines.length - 1]) {
+                    root = clone;
+                } else {
+                    parent.appendChild(clone);
+                }
+
+                parent = clone;
+            });
+
+            const textNode = document.createTextNode(text);
+
+            if (ancestors.length) {
+                parent.appendChild(textNode);
+
+                if (root) {
+                    lines[lines.length - 1].appendChild(root);
+                }
+            } else {
+                lines[lines.length - 1].appendChild(textNode);
+            }
+        }
+
+        function visit(node, ancestors = []) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const parts = node.nodeValue.split('\n');
+
+                parts.forEach((part, index) => {
+                    appendText(part, ancestors);
+
+                    if (index < parts.length - 1) {
+                        lines.push(document.createDocumentFragment());
+                    }
+                });
+
+                return;
+            }
+
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                if (node.tagName === 'BR') {
+                    lines.push(document.createDocumentFragment());
+                    return;
+                }
+
+                const nextAncestors = [...ancestors, node];
+                node.childNodes.forEach((child) => visit(child, nextAncestors));
+                return;
+            }
+
+            node.childNodes?.forEach((child) => visit(child, ancestors));
+        }
+
+        visit(template.content);
+
+        return lines;
     }
 
     function renderFileTabs(files) {
@@ -299,23 +429,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             input.name = 'file-tab';
             input.id = tabId;
             input.checked = index === 0;
-
-            input.addEventListener('change', () => {
-                activateFile(index);
-            });
+            input.addEventListener('change', () => activateFile(index));
 
             const label = document.createElement('label');
             label.htmlFor = tabId;
             label.className = 'editor-tab';
-
-            label.appendChild(
-                createIcon(getLanguageIcon(currentChallenge.language))
-            );
+            label.appendChild(createIcon(getLanguageIcon(currentChallenge.language)));
 
             const fileLabel = document.createElement('span');
             fileLabel.textContent = file.name;
-
             label.appendChild(fileLabel);
+
             elements.editorTabs.append(input, label);
 
             const content = document.createElement('div');
@@ -323,9 +447,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             content.dataset.file = file.name;
             content.hidden = index !== 0;
 
-            const lines = file.content.split(/\r\n|\n|\r/);
+            const sourceLines = file.content.split(/\r\n|\n|\r/);
+            const highlightLanguage = getHighlightLanguage(file.name);
+            const highlightedSource = highlightSource(file.content, highlightLanguage);
 
-            lines.forEach((lineText, lineIndex) => {
+            const highlightedLines = highlightedSource !== null
+                ? splitHighlightedHtml(highlightedSource)
+                : null;
+
+            sourceLines.forEach((lineText, lineIndex) => {
                 const line = document.createElement('div');
                 line.className = 'code-line';
 
@@ -334,7 +464,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 number.textContent = String(lineIndex + 1);
 
                 const code = document.createElement('code');
-                code.textContent = lineText || ' ';
+                code.classList.add('hljs');
+
+                if (highlightedLines && highlightedLines[lineIndex]) {
+                    code.appendChild(highlightedLines[lineIndex].cloneNode(true));
+                } else {
+                    code.textContent = lineText || ' ';
+                }
 
                 line.append(number, code);
                 content.appendChild(line);
@@ -343,19 +479,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             elements.editorBody.appendChild(content);
         });
 
+        activeFileIndex = 0;
         currentFiles = files;
     }
 
     function activateFile(index) {
+        activeFileIndex = index;
+
         const contents = elements.editorBody.querySelectorAll('.code-content');
 
         contents.forEach((content, contentIndex) => {
             content.hidden = contentIndex !== index;
         });
 
+        const selected = currentFiles[index];
         elements.cursorPosition.textContent = 'Ln --, Col --';
 
-        if (currentFiles[index]) {
+        if (selected) {
             elements.editorLanguage.textContent = currentChallenge.language;
         }
     }
@@ -364,19 +504,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const entries = Object.entries(challenge.files || {});
 
         if (!entries.length) {
-            throw new Error(
-                'Este desafio não possui arquivos fonte definidos.'
-            );
+            throw new Error('Este desafio não possui arquivos fonte definidos.');
         }
 
-        return Promise.all(entries.map(async ([name, path]) => {
+        const files = await Promise.all(entries.map(async ([name, path]) => {
             const url = new URL(path, document.baseURI);
             const response = await fetch(url);
 
             if (!response.ok) {
-                throw new Error(
-                    `Não foi possível carregar "${name}" (${response.status}).`
-                );
+                throw new Error(`Não foi possível carregar "${name}" (${response.status}).`);
             }
 
             return {
@@ -384,9 +520,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 content: await response.text()
             };
         }));
+
+        return files;
     }
 
     async function selectChallenge(difficulty, challenge) {
+        currentDifficulty = difficulty;
         currentChallenge = challenge;
         selectedLine = null;
 
@@ -402,10 +541,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const info = difficultyInfo[difficulty];
 
-        elements.difficultyBadge.textContent = info
-            ? info.label
-            : difficulty;
-
+        elements.difficultyBadge.textContent = info ? info.label : difficulty;
         elements.difficultyBadge.className =
             `difficulty-badge ${info ? info.colorClass : ''}`;
 
@@ -413,16 +549,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         clearAnswerState();
 
         if (challenge.type === 'choice') {
-            renderChoices(
-                Array.isArray(challenge.choices)
-                    ? challenge.choices
-                    : []
-            );
+            renderChoices(Array.isArray(challenge.choices) ? challenge.choices : []);
         }
 
-        const index = allChallenges.findIndex(
-            (item) => item.id === challenge.id
-        );
+        const index = allChallenges.findIndex((item) => item.id === challenge.id);
 
         elements.challengePosition.textContent =
             `Desafio ${index + 1} de ${allChallenges.length}`;
@@ -439,7 +569,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const files = await loadChallengeFiles(challenge);
 
-            // Evita que uma requisição antiga sobrescreva a seleção atual.
+            // Evita que uma requisição antiga sobrescreva o desafio selecionado mais recentemente.
             if (!currentChallenge || currentChallenge.id !== challenge.id) {
                 return;
             }
@@ -462,9 +592,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let correct = false;
 
         if (currentChallenge.type === 'choice') {
-            const selected = elements.answerOptions.querySelector(
-                'input:checked'
-            );
+            const selected = elements.answerOptions.querySelector('input:checked');
 
             correct = Boolean(selected)
                 && Number(selected.value) === Number(currentChallenge.answer);
@@ -487,10 +615,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateProgress();
             updateActiveNavigation();
 
-            setFeedback(
-                'Resposta correta! Desafio concluído.',
-                'success'
-            );
+            setFeedback('Resposta correta! Desafio concluído.', 'success');
 
             return true;
         }
@@ -513,8 +638,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const nextIndex = (currentIndex + 1) % allChallenges.length;
         const next = allChallenges[nextIndex];
 
-        const difficulty = Object.keys(challengesByDifficulty).find(
-            (key) => (challengesByDifficulty[key] || []).some(
+        const difficulty = Object.keys(challengesByDifficulty).find((key) =>
+            (challengesByDifficulty[key] || []).some(
                 (challenge) => challenge.id === next.id
             )
         );
@@ -526,9 +651,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function validateDatabase(data) {
         if (!data || typeof data !== 'object' || Array.isArray(data)) {
-            throw new Error(
-                'O JSON de desafios possui um formato inválido.'
-            );
+            throw new Error('O JSON de desafios possui um formato inválido.');
         }
 
         const normalized = {};
@@ -605,10 +728,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const clickedLine = event.target.closest('.code-line');
 
-        if (
-            !clickedLine
-            || !elements.editorBody.contains(clickedLine)
-        ) {
+        if (!clickedLine || !elements.editorBody.contains(clickedLine)) {
             return;
         }
 

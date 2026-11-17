@@ -20,7 +20,22 @@
             }
         }
     ],
-    "easy": [],
+    "easy": [
+        {
+            "id": "baby-step",
+            "title": "Passos de bebê",
+            "description": "Revise o código abaixo. Você consegue encontrar alguma vulnerabilidade? Se sim, clique na linha com a vulnerabilidade para selecionar a linha e então envie sua resposta.",
+            "explanation": "Essa vulnerabilidade é um [[Cross-site scripting|XSS]] armazenado, também identificada como #CWE-79 e owasp{A05:2025 Injection}. Ao inserir uma URL com o pseudo-protocolo `javascript:`, como `javascript:alert(document.domain)`, é possível executar JavaScript na página quando o usuário clicar no link.",
+            "language": "JavaScript",
+            "type": "line",
+            "answer": "frontend.js:17",
+            "files": {
+                "user.js": "challenges/baby-step/user.js",
+                "frontend.js": "challenges/baby-step/frontend.js",
+                "user.html": "challenges/baby-step/user.html"
+            }
+        }
+    ],
     "medium": [],
     "hard": []
 }

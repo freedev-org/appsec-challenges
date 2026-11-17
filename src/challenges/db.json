@@ -1,0 +1,26 @@
+{
+    "very-easy": [
+        {
+            "id": "hello-world",
+            "title": "Olá, mundo!",
+            "description": "Bem-vindo ao mundo do AppSec! Seu primeiro desafio é revisar o código abaixo e identificar qual tipo de vulnerabilidade se encontra no código.",
+            "explanation": "Essa vulnerabilidade é um [[Cross-site scripting|XSS]] refletido identificada como #CWE-79, na OWASP ela se enquadra como owasp{A05:2025 Injection}. O risco dessa vulnerabilidade é uma ameaça compartilhar um link com o payload do XSS na URL e um usuário clicar no link e ter código JavaScript executado na página. Possíveis impactos de segurança seriam a exfiltração de sua credencial de acesso, resultando no acesso não autorizado à sua conta; a interação automática no site em nome do usuário, permitindo que ações maliciosas possam ser feitas em sua conta; a manipulação da página para enganar o usuário, como para convencê-lo a redigitar seu login e senha; ou, no pior dos casos, a exploração de uma vulnerabilidade no navegador do usuário que permitiria a execução de código na sua máquina.",
+            "language": "PHP",
+            "type": "choice",
+            "choices": [
+                "SSRF",
+                "SQL injection",
+                "XXE injection",
+                "XSS",
+                "CSRF"
+            ],
+            "answer": 4,
+            "files": {
+                "index.php": "challenges/hello-world/index.php"
+            }
+        }
+    ],
+    "easy": [],
+    "medium": [],
+    "hard": []
+}

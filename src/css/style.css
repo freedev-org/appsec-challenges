@@ -856,3 +856,69 @@ input {
         max-width: 70%;
     }
 }
+
+
+/* =========================================
+   ELEMENTOS DINÂMICOS
+========================================= */
+
+.challenge-item {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.difficulty-title > span:nth-child(2) {
+    color: var(--text);
+}
+
+.code-content[hidden],
+.answer-section[hidden],
+.section-divider[hidden] {
+    display: none !important;
+}
+
+.code-content {
+    display: block;
+}
+
+.code-content:not([hidden]) {
+    display: block;
+}
+
+.loading-message {
+    padding: 18px 24px;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+}
+
+.error-message {
+    color: #b91c1c;
+}
+
+.very-easy-badge {
+    background: #ecfdf5;
+    color: var(--very-easy);
+}
+
+.medium-badge {
+    background: #fffbeb;
+    color: var(--medium);
+}
+
+.hard-badge {
+    background: #fef2f2;
+    color: var(--hard);
+}
+
+.answer-hint.feedback-success {
+    color: var(--success);
+}
+
+.answer-hint.feedback-error {
+    color: #dc2626;
+}

@@ -20,13 +20,9 @@
 
 <body>
     <div class="app">
-
-        <!-- MENU ESQUERDO -->
         <aside class="sidebar left-sidebar">
             <div class="brand">
-                <div class="brand-icon">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
+                <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
                 <div>
                     <strong>Secure Review</strong>
                     <small>Code challenges</small>
@@ -36,104 +32,23 @@
             <div class="progress-card">
                 <div class="progress-header">
                     <span>Seu progresso</span>
-                    <strong>3/12</strong>
+                    <strong id="progress-count">0/0</strong>
                 </div>
                 <div class="progress-track">
-                    <div class="progress-value"></div>
+                    <div class="progress-value" id="progress-value"></div>
                 </div>
-                <small>25% dos desafios concluídos</small>
+                <small id="progress-description">0% dos desafios concluídos</small>
             </div>
 
-            <div class="challenge-navigation">
+            <nav class="challenge-navigation">
                 <div class="nav-heading">
                     <span>DESAFIOS</span>
                     <i class="fa-solid fa-sliders"></i>
                 </div>
-
-                <div class="difficulty-group">
-                    <div class="difficulty-title">
-                        <span class="difficulty-dot very-easy"></span>
-                        Muito fácil
-                        <span class="group-count">2</span>
-                    </div>
-
-                    <a href="#" class="challenge-item completed">
-                        <i class="fa-solid fa-circle-check status"></i>
-                        <span>SQL básico</span>
-                    </a>
-                    <a href="#" class="challenge-item completed">
-                        <i class="fa-solid fa-circle-check status"></i>
-                        <span>Dados sensíveis</span>
-                    </a>
+                <div id="challenge-list">
+                    <p class="loading-message">Carregando desafios...</p>
                 </div>
-
-                <div class="difficulty-group">
-                    <div class="difficulty-title">
-                        <span class="difficulty-dot easy"></span>
-                        Fácil
-                        <span class="group-count">3</span>
-                    </div>
-
-                    <a href="#" class="challenge-item active">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>SQL Injection</span>
-                    </a>
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>Hardcoded Secret</span>
-                    </a>
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>Path Traversal</span>
-                    </a>
-                </div>
-
-                <div class="difficulty-group">
-                    <div class="difficulty-title">
-                        <span class="difficulty-dot medium"></span>
-                        Médio
-                        <span class="group-count">4</span>
-                    </div>
-
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>Broken Access Control</span>
-                    </a>
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>Insecure Deserialization</span>
-                    </a>
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>Race Condition</span>
-                    </a>
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>XXE Injection</span>
-                    </a>
-                </div>
-
-                <div class="difficulty-group">
-                    <div class="difficulty-title">
-                        <span class="difficulty-dot hard"></span>
-                        Difícil
-                        <span class="group-count">3</span>
-                    </div>
-
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>JWT Algorithm Confusion</span>
-                    </a>
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>TOCTOU Vulnerability</span>
-                    </a>
-                    <a href="#" class="challenge-item">
-                        <i class="fa-regular fa-circle status"></i>
-                        <span>Prototype Pollution</span>
-                    </a>
-                </div>
-            </div>
+            </nav>
 
             <div class="sidebar-footer">
                 <i class="fa-regular fa-circle-question"></i>
@@ -141,278 +56,113 @@
             </div>
         </aside>
 
-        <!-- ÁREA CENTRAL -->
         <main class="main-content">
             <header class="topbar">
                 <div class="breadcrumb">
                     <span>Desafios</span>
                     <i class="fa-solid fa-chevron-right"></i>
-                    <strong>SQL Injection</strong>
+                    <strong id="breadcrumb-title">Carregando...</strong>
                 </div>
-
                 <div class="topbar-actions">
-                    <span class="difficulty-badge easy-badge">Fácil</span>
+                    <span class="difficulty-badge" id="difficulty-badge"></span>
                 </div>
             </header>
 
             <section class="challenge-description">
                 <div>
-                    <h1>SQL Injection</h1>
-                    <p>
-                        Analise o código-fonte e identifique possíveis
-                        vulnerabilidades de segurança.
-                    </p>
+                    <h1 id="challenge-title">Carregando desafios...</h1>
+                    <p id="challenge-description"></p>
                 </div>
-
                 <div class="challenge-meta">
-                    <span><i class="fa-solid fa-code"></i> Python</span>
+                    <span><i class="fa-solid fa-code"></i> <span id="challenge-language"></span></span>
                 </div>
             </section>
 
-            <!-- EDITOR -->
             <section class="editor">
                 <div class="editor-header">
-                    <div class="editor-tabs">
-                        <input type="radio" name="file-tab" id="tab-main" checked>
-                        <label for="tab-main" class="editor-tab">
-                            <i class="fa-brands fa-python"></i>
-                            app.py
-                        </label>
-
-                        <input type="radio" name="file-tab" id="tab-database">
-                        <label for="tab-database" class="editor-tab">
-                            <i class="fa-brands fa-python"></i>
-                            database.py
-                        </label>
-
-                        <input type="radio" name="file-tab" id="tab-config">
-                        <label for="tab-config" class="editor-tab">
-                            <i class="fa-solid fa-gear"></i>
-                            config.py
-                        </label>
-                    </div>
-
+                    <div class="editor-tabs" id="editor-tabs"></div>
                     <div class="editor-actions">
-                        <span>Python</span>
+                        <span id="editor-language"></span>
                         <i class="fa-solid fa-ellipsis"></i>
                     </div>
                 </div>
 
-                <div class="editor-body">
-                    <!-- ARQUIVO APP.PY -->
-                    <div class="code-content code-main" data-file="app.py">
-                        <div class="code-line">
-                            <span class="line-number">1</span>
-                            <code><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">2</span>
-                            <code><span class="keyword">from</span> database <span class="keyword">import</span> get_user</code>
-                        </div>
-                        <div class="code-line empty">
-                            <span class="line-number">3</span>
-                            <code></code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">4</span>
-                            <code>app = Flask(__name__)</code>
-                        </div>
-                        <div class="code-line empty">
-                            <span class="line-number">5</span>
-                            <code></code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">6</span>
-                            <code><span class="decorator">@app.route</span>(<span class="string">"/user"</span>)</code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">7</span>
-                            <code><span class="keyword">def</span> <span class="function">user_profile</span>():</code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">8</span>
-                            <code>    user_id = request.args.get(<span class="string">"id"</span>)</code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">9</span>
-                            <code>    user = get_user(user_id)</code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">10</span>
-                            <code>    <span class="keyword">return</span> {<span class="string">"name"</span>: user.name}</code>
-                        </div>
-                    </div>
-
-                    <!-- ARQUIVO DATABASE.PY -->
-                    <div class="code-content code-database" data-file="database.py">
-                        <div class="code-line">
-                            <span class="line-number">1</span>
-                            <code><span class="keyword">import</span> sqlite3</code>
-                        </div>
-                        <div class="code-line empty">
-                            <span class="line-number">2</span>
-                            <code></code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">3</span>
-                            <code><span class="keyword">def</span> <span class="function">get_user</span>(user_id):</code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">4</span>
-                            <code>    connection = sqlite3.connect(<span class="string">"app.db"</span>)</code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">5</span>
-                            <code>    cursor = connection.cursor()</code>
-                        </div>
-                        <div class="code-line empty">
-                            <span class="line-number">6</span>
-                            <code></code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">7</span>
-                            <code>    query = <span class="string">"SELECT * FROM users WHERE id = "</span></code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">8</span>
-                            <code>    cursor.execute(query + user_id)</code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">9</span>
-                            <code>    <span class="keyword">return</span> cursor.fetchone()</code>
-                        </div>
-                    </div>
-
-                    <!-- ARQUIVO CONFIG.PY -->
-                    <div class="code-content code-config" data-file="config.py">
-                        <div class="code-line">
-                            <span class="line-number">1</span>
-                            <code>DATABASE = <span class="string">"app.db"</span></code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">2</span>
-                            <code>DEBUG = <span class="keyword">False</span></code>
-                        </div>
-                        <div class="code-line">
-                            <span class="line-number">3</span>
-                            <code>TIMEOUT = <span class="number">30</span></code>
-                        </div>
-                    </div>
+                <div class="editor-body" id="editor-body">
+                    <p class="loading-message">Selecione um desafio para carregar os arquivos.</p>
                 </div>
 
                 <div class="editor-footer">
                     <span><i class="fa-solid fa-code-branch"></i> main</span>
                     <span>UTF-8</span>
-                    <span>Python</span>
-                    <span>Ln 9, Col 5</span>
+                    <span id="editor-footer-language"></span>
+                    <span id="editor-cursor-position">Ln --, Col --</span>
                 </div>
             </section>
 
             <div class="editor-bottom">
-                <span><i class="fa-solid fa-lightbulb"></i> Dica: examine como os dados externos são utilizados.</span>
-                <span>Desafio 3 de 12</span>
+                <span><i class="fa-solid fa-lightbulb"></i> Analise como os dados externos são utilizados.</span>
+                <span id="challenge-position"></span>
             </div>
         </main>
 
-        <!-- MENU DIREITO -->
         <aside class="sidebar right-sidebar">
             <div class="answer-header">
                 <div>
                     <h2>Sua resposta</h2>
-                    <p>Identifique os problemas de segurança.</p>
+                    <p>Identifique o problema de segurança.</p>
                 </div>
                 <span class="question-number">01</span>
             </div>
 
-            <!-- MÚLTIPLA ESCOLHA -->
-            <section class="answer-section">
+            <section class="answer-section" id="choice-section" hidden>
                 <div class="section-heading">
                     <span class="section-number">1</span>
                     <h3>Múltipla escolha</h3>
                 </div>
-
-                <p class="question">
-                    Qual vulnerabilidade está presente no código?
-                </p>
-
-                <div class="answer-options">
-                    <label class="answer-option">
-                        <input type="radio" name="vulnerability">
-                        <span class="custom-radio"></span>
-                        <span>Cross-Site Scripting (XSS)</span>
-                    </label>
-                    <label class="answer-option">
-                        <input type="radio" name="vulnerability">
-                        <span class="custom-radio"></span>
-                        <span>SQL Injection</span>
-                    </label>
-                    <label class="answer-option">
-                        <input type="radio" name="vulnerability">
-                        <span class="custom-radio"></span>
-                        <span>Path Traversal</span>
-                    </label>
-                    <label class="answer-option">
-                        <input type="radio" name="vulnerability">
-                        <span class="custom-radio"></span>
-                        <span>Não há vulnerabilidades</span>
-                    </label>
-                </div>
+                <p class="question">Selecione a resposta correta.</p>
+                <div class="answer-options" id="answer-options"></div>
             </section>
 
-            <div class="section-divider"></div>
-
-            <!-- TEXTO LIVRE -->
-            <section class="answer-section">
+            <section class="answer-section" id="text-section" hidden>
                 <div class="section-heading">
-                    <span class="section-number">2</span>
-                    <h3>Explique sua resposta</h3>
+                    <span class="section-number">1</span>
+                    <h3>Sua resposta</h3>
                 </div>
-
-                <p class="question">
-                    Escreva sua resposta.
-                </p>
-
+                <p class="question">Escreva sua resposta.</p>
                 <input
                     type="text"
                     class="text-input"
-                    name="free-response"
+                    id="text-answer"
+                    name="text-answer"
                     placeholder="Digite sua resposta..."
                     aria-label="Resposta em texto livre"
+                    autocomplete="off"
                 >
             </section>
 
-            <div class="section-divider"></div>
-
-            <!-- SELEÇÃO DE LINHAS -->
-            <section class="answer-section">
+            <section class="answer-section" id="line-section" hidden>
                 <div class="section-heading">
-                    <span class="section-number">3</span>
-                    <h3>Identifique as linhas</h3>
+                    <span class="section-number">1</span>
+                    <h3>Identifique a linha</h3>
                 </div>
-
-                <p class="question">
-                    Clique diretamente nas linhas do código que apresentam vulnerabilidades.
-                </p>
-
+                <p class="question">Clique na linha do código que apresenta a vulnerabilidade.</p>
                 <div class="selected-lines" id="selected-lines" aria-live="polite">
-                    <div class="empty-selection">
-                        Nenhuma linha selecionada.
-                    </div>
+                    <div class="empty-selection">Nenhuma linha selecionada.</div>
                 </div>
             </section>
 
-            <div class="answer-footer">
-                <div class="answer-hint">
-                    <i class="fa-solid fa-circle-info"></i>
-                    Revise suas respostas antes de enviar.
-                </div>
+            <div class="section-divider" id="answer-divider" hidden></div>
 
-                <button class="submit-button" type="button">
+            <div class="answer-footer">
+                <div class="answer-hint" id="answer-feedback" aria-live="polite">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Revise sua resposta antes de enviar.</span>
+                </div>
+                <button class="submit-button" id="submit-answer" type="button">
                     Enviar resposta
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
-
-                <button class="skip-button" type="button">
+                <button class="skip-button" id="skip-challenge" type="button">
                     Pular desafio
                 </button>
             </div>

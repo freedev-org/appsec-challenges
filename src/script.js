@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         breadcrumbTitle: document.getElementById('breadcrumb-title'),
         difficultyBadge: document.getElementById('difficulty-badge'),
         title: document.getElementById('challenge-title'),
+        shareButton: document.getElementById('share-challenge'),
+        shareFeedback: document.getElementById('share-feedback'),
         description: document.getElementById('challenge-description'),
         language: document.getElementById('challenge-language'),
         editorLanguage: document.getElementById('editor-language'),
@@ -89,6 +91,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         const url = new URL(window.location.href);
         url.hash = challenge.id;
         window.history.replaceState(window.history.state, '', url);
+    }
+
+    async function copyChallengeLink() {
+        if (!currentChallenge) return;
+
+        const url = new URL(window.location.href);
+        url.hash = currentChallenge.id;
+        const link = url.toString();
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(link);
+            } else {
+                const temporaryInput = document.createElement('textarea');
+                temporaryInput.value = link;
+                temporaryInput.setAttribute('readonly', '');
+                temporaryInput.style.position = 'fixed';
+                temporaryInput.style.opacity = '0';
+                document.body.appendChild(temporaryInput);
+                temporaryInput.select();
+
+                const copied = document.execCommand('copy');
+                temporaryInput.remove();
+
+                if (!copied) {
+                    throw new Error('O navegador não permitiu copiar o link.');
+                }
+            }
+
+            elements.shareFeedback.textContent = 'Link copiado!';
+            elements.shareFeedback.classList.remove('error');
+            elements.shareFeedback.classList.add('visible');
+            elements.shareButton.classList.add('copied');
+            elements.shareButton.querySelector('i').className = 'fa-solid fa-check';
+            elements.shareButton.querySelector('span').textContent = 'Copiado!';
+        } catch (error) {
+            elements.shareFeedback.textContent = 'Não foi possível copiar o link.';
+            elements.shareFeedback.classList.add('visible', 'error');
+            console.error('Erro ao copiar link do desafio:', error);
+        }
+    }
+
+    function resetShareFeedback() {
+        elements.shareFeedback.textContent = '';
+        elements.shareFeedback.classList.remove('visible', 'error');
+        elements.shareButton.classList.remove('copied');
+        elements.shareButton.querySelector('i').className = 'fa-solid fa-share-nodes';
+        elements.shareButton.querySelector('span').textContent = 'Compartilhar';
     }
 
     function getChallengeFromUrl(challenges) {
@@ -592,6 +642,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentDifficulty = difficulty;
         currentChallenge = challenge;
         selectedLine = null;
+        resetShareFeedback();
         updateChallengeUrl(challenge);
         saveOpenState(preferredFileName);
 
@@ -784,6 +835,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return normalized;
     }
 
+    elements.shareButton.addEventListener('click', copyChallengeLink);
     elements.submitAnswer.addEventListener('click', checkAnswer);
     elements.skipChallenge.addEventListener('click', skipChallenge);
 

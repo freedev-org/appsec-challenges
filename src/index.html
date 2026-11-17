@@ -68,7 +68,15 @@
 
             <section class="challenge-description">
                 <div>
-                    <h1 id="challenge-title">Carregando desafios...</h1>
+                    <div class="challenge-title-row">
+                        <h1 id="challenge-title">Carregando desafios...</h1>
+                        <button class="share-challenge-button" id="share-challenge" type="button"
+                            aria-label="Copiar link deste desafio" title="Copiar link deste desafio">
+                            <i class="fa-solid fa-share-nodes"></i>
+                            <span>Compartilhar</span>
+                        </button>
+                        <span class="share-feedback" id="share-feedback" aria-live="polite"></span>
+                    </div>
                     <p id="challenge-description"></p>
                 </div>
                 <div class="challenge-meta">

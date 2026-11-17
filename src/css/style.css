@@ -954,3 +954,56 @@ input {
     padding: 0;
     background: transparent !important;
 }
+
+
+/* Compartilhamento do desafio */
+.challenge-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 7px;
+}
+
+.challenge-title-row h1 {
+    margin: 0;
+}
+
+.share-challenge-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--text-secondary);
+    font: 500 11px 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+
+.share-challenge-button:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.share-challenge-button.copied {
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.share-feedback {
+    display: none;
+    color: var(--success);
+    font-size: 11px;
+}
+
+.share-feedback.visible {
+    display: inline;
+}
+
+.share-feedback.error {
+    color: #dc2626;
+}

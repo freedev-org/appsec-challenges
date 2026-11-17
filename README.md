@@ -1,2 +1,3 @@
-# websec-review-challenges
-Desafios de revisão de segurança web
+# appsec-review-challenges
+
+Desafios de revisão de segurança de código.

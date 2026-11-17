@@ -420,82 +420,63 @@ document.addEventListener('DOMContentLoaded', async () => {
         return 'fa-solid fa-file-code';
     }
 
-    function getHighlightLanguage(fileName) {
-        const extension = String(fileName).split('.').pop().toLowerCase();
+    function getFileLanguageInfo(fileName) {
+        const name = String(fileName || '').split(/[\\/]/).pop();
+        const extension = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
 
         const languages = {
-            py: 'python',
-            pyw: 'python',
-            js: 'javascript',
-            mjs: 'javascript',
-            cjs: 'javascript',
-            jsx: 'javascript',
-            ts: 'typescript',
-            tsx: 'typescript',
-            html: 'xml',
-            htm: 'xml',
-            xhtml: 'xml',
-            xml: 'xml',
-            svg: 'xml',
-            css: 'css',
-            scss: 'scss',
-            less: 'less',
-            json: 'json',
-            jsonc: 'json',
-            sql: 'sql',
-            java: 'java',
-            c: 'c',
-            h: 'c',
-            cc: 'cpp',
-            cpp: 'cpp',
-            cxx: 'cpp',
-            hpp: 'cpp',
-            cs: 'csharp',
-            go: 'go',
-            rs: 'rust',
-            php: 'php',
-            rb: 'ruby',
-            sh: 'bash',
-            bash: 'bash',
-            zsh: 'bash',
-            yml: 'yaml',
-            yaml: 'yaml',
-            toml: 'ini',
-            ini: 'ini',
-            md: 'markdown',
-            markdown: 'markdown',
-            dockerfile: 'dockerfile'
+            py: { label: 'Python', highlight: 'python', icon: 'python' },
+            pyw: { label: 'Python', highlight: 'python', icon: 'python' },
+            js: { label: 'JavaScript', highlight: 'javascript', icon: 'javascript' },
+            mjs: { label: 'JavaScript', highlight: 'javascript', icon: 'javascript' },
+            cjs: { label: 'JavaScript', highlight: 'javascript', icon: 'javascript' },
+            jsx: { label: 'JavaScript (React)', highlight: 'javascript', icon: 'javascript' },
+            ts: { label: 'TypeScript', highlight: 'typescript', icon: 'typescript' },
+            tsx: { label: 'TypeScript (React)', highlight: 'typescript', icon: 'typescript' },
+            html: { label: 'HTML', highlight: 'xml', icon: 'html' },
+            htm: { label: 'HTML', highlight: 'xml', icon: 'html' },
+            xhtml: { label: 'XHTML', highlight: 'xml', icon: 'html' },
+            xml: { label: 'XML', highlight: 'xml', icon: 'file-code' },
+            svg: { label: 'SVG', highlight: 'xml', icon: 'file-code' },
+            css: { label: 'CSS', highlight: 'css', icon: 'css' },
+            scss: { label: 'SCSS', highlight: 'scss', icon: 'css' },
+            less: { label: 'Less', highlight: 'less', icon: 'css' },
+            json: { label: 'JSON', highlight: 'json', icon: 'file-code' },
+            jsonc: { label: 'JSONC', highlight: 'json', icon: 'file-code' },
+            sql: { label: 'SQL', highlight: 'sql', icon: 'file-code' },
+            java: { label: 'Java', highlight: 'java', icon: 'file-code' },
+            c: { label: 'C', highlight: 'c', icon: 'file-code' },
+            h: { label: 'C', highlight: 'c', icon: 'file-code' },
+            cc: { label: 'C++', highlight: 'cpp', icon: 'file-code' },
+            cpp: { label: 'C++', highlight: 'cpp', icon: 'file-code' },
+            cxx: { label: 'C++', highlight: 'cpp', icon: 'file-code' },
+            hpp: { label: 'C++', highlight: 'cpp', icon: 'file-code' },
+            cs: { label: 'C#', highlight: 'csharp', icon: 'file-code' },
+            go: { label: 'Go', highlight: 'go', icon: 'file-code' },
+            rs: { label: 'Rust', highlight: 'rust', icon: 'file-code' },
+            php: { label: 'PHP', highlight: 'php', icon: 'file-code' },
+            rb: { label: 'Ruby', highlight: 'ruby', icon: 'file-code' },
+            sh: { label: 'Shell', highlight: 'bash', icon: 'file-code' },
+            bash: { label: 'Bash', highlight: 'bash', icon: 'file-code' },
+            zsh: { label: 'Zsh', highlight: 'bash', icon: 'file-code' },
+            yml: { label: 'YAML', highlight: 'yaml', icon: 'file-code' },
+            yaml: { label: 'YAML', highlight: 'yaml', icon: 'file-code' },
+            toml: { label: 'TOML', highlight: 'ini', icon: 'file-code' },
+            ini: { label: 'INI', highlight: 'ini', icon: 'file-code' },
+            md: { label: 'Markdown', highlight: 'markdown', icon: 'file-code' },
+            markdown: { label: 'Markdown', highlight: 'markdown', icon: 'file-code' }
         };
 
-        if (languages[extension]) return languages[extension];
+        // Dockerfile normalmente não possui extensão.
+        if (name.toLowerCase() === 'dockerfile') {
+            return { label: 'Dockerfile', highlight: 'dockerfile', icon: 'file-code' };
+        }
 
-        // Fallback para arquivos sem extensão reconhecida, usando language do desafio.
-        const challengeLanguage = String(currentChallenge?.language || '').toLowerCase();
-
-        const fallback = {
-            python: 'python',
-            javascript: 'javascript',
-            js: 'javascript',
-            typescript: 'typescript',
-            html: 'xml',
-            xml: 'xml',
-            css: 'css',
-            sql: 'sql',
-            java: 'java',
-            c: 'c',
-            cpp: 'cpp',
-            'c++': 'cpp',
-            csharp: 'csharp',
-            'c#': 'csharp',
-            go: 'go',
-            rust: 'rust',
-            php: 'php',
-            ruby: 'ruby',
-            shell: 'bash',
-            bash: 'bash'
+        return languages[extension] || {
+            label: extension ? extension.toUpperCase() : 'Texto simples',
+            highlight: null,
+            icon: 'file-code'
         };
-
-        return fallback[challengeLanguage] || null;
     }
 
     function highlightSource(source, language) {
@@ -608,7 +589,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const label = document.createElement('label');
             label.htmlFor = tabId;
             label.className = 'editor-tab';
-            label.appendChild(createIcon(getLanguageIcon(currentChallenge.language)));
+            const fileLanguage = getFileLanguageInfo(file.name);
+            label.appendChild(createIcon(getLanguageIcon(fileLanguage.icon)));
 
             const fileLabel = document.createElement('span');
             fileLabel.textContent = file.name;
@@ -622,7 +604,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             content.hidden = index !== initialFileIndex;
 
             const sourceLines = file.content.split(/\r\n|\n|\r/);
-            const highlightLanguage = getHighlightLanguage(file.name);
+            const highlightLanguage = fileLanguage.highlight;
             const highlightedSource = highlightSource(file.content, highlightLanguage);
 
             const highlightedLines = highlightedSource !== null
@@ -671,7 +653,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         elements.cursorPosition.textContent = 'Ln --, Col --';
 
         if (selected) {
-            elements.editorLanguage.textContent = currentChallenge.language;
+            const languageInfo = getFileLanguageInfo(selected.name);
+            elements.editorLanguage.textContent = languageInfo.label;
+            elements.editorFooterLanguage.textContent = languageInfo.label;
             saveOpenState(selected.name);
         }
     }

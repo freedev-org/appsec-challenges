@@ -1141,3 +1141,212 @@ input {
     .explanation-modal-header, .explanation-modal-body { padding-left: 18px; padding-right: 18px; }
     .explanation-modal-footer { padding: 13px 18px; }
 }
+
+/* =========================================
+   RESPONSIVIDADE PARA TABLETS E CELULARES
+   Mantém navegação e painel de respostas acessíveis
+========================================= */
+@media (max-width: 850px) {
+    .app {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+    }
+
+    .left-sidebar,
+    .right-sidebar {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        overflow: visible;
+    }
+
+    .left-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+        min-height: 60px;
+        height: auto;
+    }
+
+    .progress-card {
+        margin: 12px 14px;
+    }
+
+    .challenge-navigation {
+        flex: none;
+        max-height: 210px;
+        overflow-y: auto;
+        padding-bottom: 10px;
+    }
+
+    .main-content {
+        min-height: 680px;
+        overflow: visible;
+    }
+
+    .editor {
+        min-height: 420px;
+    }
+
+    .right-sidebar {
+        border-top: 1px solid var(--border);
+        border-left: 0;
+    }
+
+    .answer-header {
+        padding: 18px 20px;
+    }
+
+    .answer-section {
+        padding: 18px 20px;
+    }
+
+    .answer-footer {
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .app {
+        min-height: 100vh;
+    }
+
+    .brand {
+        padding: 12px 16px;
+    }
+
+    .progress-card {
+        margin: 10px 12px;
+        padding: 12px;
+    }
+
+    .challenge-navigation {
+        max-height: 190px;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .nav-heading {
+        padding-bottom: 8px;
+    }
+
+    .difficulty-group {
+        margin-bottom: 10px;
+    }
+
+    .challenge-item {
+        min-height: 40px;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .topbar {
+        min-height: 50px;
+        height: auto;
+        gap: 8px;
+        padding: 10px 15px;
+    }
+
+    .breadcrumb {
+        min-width: 0;
+        gap: 7px;
+        font-size: 10px;
+    }
+
+    .breadcrumb strong {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .challenge-description {
+        gap: 12px;
+        padding: 18px 16px;
+    }
+
+    .challenge-title-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .challenge-description h1 {
+        font-size: 18px;
+    }
+
+    .editor {
+        min-height: 380px;
+        height: 55vh;
+        max-height: 620px;
+        margin: 0 10px;
+    }
+
+    .editor-header {
+        min-height: 43px;
+    }
+
+    .editor-tabs {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .editor-tab {
+        padding: 0 11px;
+    }
+
+    .editor-actions {
+        gap: 7px;
+        padding: 0 9px;
+    }
+
+    .editor-footer {
+        gap: 9px;
+        padding: 0 8px;
+        white-space: nowrap;
+    }
+
+    .editor-bottom {
+        height: auto;
+        min-height: 48px;
+        padding: 10px 16px;
+        font-size: 9px;
+    }
+
+    .right-sidebar {
+        margin-top: 8px;
+    }
+
+    .answer-header h2 {
+        font-size: 15px;
+    }
+
+    .answer-header p,
+    .question {
+        font-size: 11px;
+    }
+
+    .answer-option {
+        min-height: 44px;
+        padding: 11px;
+        font-size: 12px;
+    }
+
+    .text-input {
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .submit-button {
+        min-height: 46px;
+        font-size: 13px;
+    }
+
+    .skip-button {
+        min-height: 40px;
+        font-size: 12px;
+    }
+}

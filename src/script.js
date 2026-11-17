@@ -291,9 +291,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const year = match[3];
                 const title = match[4].trim();
                 const slug = `${code}_${year}-${title.replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_|_$/g, '')}`;
-                link.href = year === '2025'
-                    ? `https://owasp.org/Top10/2025/${slug}/`
-                    : `https://owasp.org/Top10/${slug}/`;
+                link.href = `https://top10.owasp.org/${year}/${slug}/`;
                 link.textContent = `${code}:${year} ${title}`;
             } else {
                 const article = match[5].trim();

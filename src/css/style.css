@@ -1350,3 +1350,21 @@ input {
         font-size: 12px;
     }
 }
+
+/* Código inline nos campos de descrição e explicação */
+.markup-inline-code {
+    display: inline;
+    padding: 0.12em 0.38em;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 4px;
+    background: var(--code-background, #f3f4f6);
+    color: var(--text-primary, #1f2937);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    white-space: break-spaces;
+    overflow-wrap: anywhere;
+}
+
+.markup-inline-code.hljs {
+    padding: 0.12em 0.38em;
+}

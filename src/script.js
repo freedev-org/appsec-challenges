@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         container.replaceChildren();
 
         const text = String(source || '');
-        const tokenPattern = /#CWE-(\d+)|owasp\{(A\d{2}):(\d{4})\s+([^}]+)\}|\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/gi;
+        const tokenPattern = /`([^`\n]+)`|#CWE-(\d+)|owasp\{(A\d{2}):(\d{4})\s+([^}]+)\}|\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/gi;
         let lastIndex = 0;
         let match;
 
@@ -276,27 +276,54 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (value) container.appendChild(document.createTextNode(value));
         }
 
+        function appendInlineCode(value) {
+            const code = document.createElement('code');
+            code.className = 'markup-inline-code';
+
+            // A linguagem não é informada no markup; tenta inferi-la pelo próprio trecho.
+            if (window.hljs && value.trim().length >= 3) {
+                try {
+                    const highlighted = hljs.highlightAuto(value);
+                    const template = document.createElement('template');
+                    template.innerHTML = highlighted.value;
+                    code.appendChild(template.content.cloneNode(true));
+                } catch (error) {
+                    code.textContent = value;
+                }
+            } else {
+                code.textContent = value;
+            }
+
+            container.appendChild(code);
+        }
+
         while ((match = tokenPattern.exec(text)) !== null) {
             appendText(text.slice(lastIndex, match.index));
+
+            if (match[1] !== undefined) {
+                appendInlineCode(match[1]);
+                lastIndex = tokenPattern.lastIndex;
+                continue;
+            }
 
             const link = document.createElement('a');
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
 
-            if (match[1]) {
-                link.href = `https://cwe.mitre.org/data/definitions/${match[1]}.html`;
-                link.textContent = `CWE-${match[1]}`;
-            } else if (match[2]) {
-                const code = match[2].toUpperCase();
-                const year = match[3];
-                const title = match[4].trim();
+            if (match[2]) {
+                link.href = `https://cwe.mitre.org/data/definitions/${match[2]}.html`;
+                link.textContent = `CWE-${match[2]}`;
+            } else if (match[3]) {
+                const code = match[3].toUpperCase();
+                const year = match[4];
+                const title = match[5].trim();
                 const slug = `${code}_${year}-${title.replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_|_$/g, '')}`;
                 link.href = `https://top10.owasp.org/${year}/${slug}/`;
                 link.textContent = `${code}:${year} ${title}`;
             } else {
-                const article = match[5].trim();
+                const article = match[6].trim();
                 link.href = `https://pt.wikipedia.org/wiki/${encodeURIComponent(article.replace(/ /g, '_'))}`;
-                link.textContent = (match[6] || article).trim();
+                link.textContent = (match[7] || article).trim();
             }
 
             const externalIcon = document.createElement('i');

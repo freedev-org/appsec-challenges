@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const DB_URL = 'challenges/db.json';
     const STORAGE_KEY = 'secure-review-progress';
+    const OPEN_STATE_STORAGE_KEY = 'secure-review-open-state';
 
     const difficultyInfo = {
         'very-easy': { label: 'Muito fácil', colorClass: 'very-easy-badge' },
@@ -48,6 +49,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentFiles = [];
     let activeFileIndex = 0;
     let progress = loadProgress();
+    const savedOpenState = loadOpenState();
+
+    function loadOpenState() {
+        try {
+            const stored = JSON.parse(localStorage.getItem(OPEN_STATE_STORAGE_KEY) || 'null');
+
+            if (
+                !stored
+                || typeof stored !== 'object'
+                || typeof stored.challengeId !== 'string'
+            ) {
+                return null;
+            }
+
+            return {
+                challengeId: stored.challengeId,
+                fileName: typeof stored.fileName === 'string' ? stored.fileName : null
+            };
+        } catch {
+            return null;
+        }
+    }
+
+    function saveOpenState(fileName = null) {
+        if (!currentChallenge) return;
+
+        try {
+            localStorage.setItem(OPEN_STATE_STORAGE_KEY, JSON.stringify({
+                challengeId: currentChallenge.id,
+                fileName
+            }));
+        } catch (error) {
+            console.warn('Não foi possível salvar o estado atual:', error);
+        }
+    }
 
     function loadProgress() {
         try {
@@ -183,7 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         renderSelectedLine();
-        setFeedback('Revise sua resposta antes de enviar.');
+        setFeedback('Você pode fazer quantas tentativas quiser.');
     }
 
     function showAnswerType(type) {
@@ -417,9 +453,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return lines;
     }
 
-    function renderFileTabs(files) {
+    function renderFileTabs(files, preferredFileName = null) {
         elements.editorTabs.replaceChildren();
         elements.editorBody.replaceChildren();
+
+        const preferredFileIndex = preferredFileName
+            ? files.findIndex((file) => file.name === preferredFileName)
+            : -1;
+
+        const initialFileIndex = preferredFileIndex >= 0 ? preferredFileIndex : 0;
 
         files.forEach((file, index) => {
             const tabId = `file-tab-${index}`;
@@ -428,7 +470,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             input.type = 'radio';
             input.name = 'file-tab';
             input.id = tabId;
-            input.checked = index === 0;
+            input.checked = index === initialFileIndex;
             input.addEventListener('change', () => activateFile(index));
 
             const label = document.createElement('label');
@@ -445,7 +487,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const content = document.createElement('div');
             content.className = 'code-content';
             content.dataset.file = file.name;
-            content.hidden = index !== 0;
+            content.hidden = index !== initialFileIndex;
 
             const sourceLines = file.content.split(/\r\n|\n|\r/);
             const highlightLanguage = getHighlightLanguage(file.name);
@@ -479,8 +521,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             elements.editorBody.appendChild(content);
         });
 
-        activeFileIndex = 0;
         currentFiles = files;
+        activeFileIndex = initialFileIndex;
+        activateFile(initialFileIndex);
     }
 
     function activateFile(index) {
@@ -497,6 +540,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (selected) {
             elements.editorLanguage.textContent = currentChallenge.language;
+            saveOpenState(selected.name);
         }
     }
 
@@ -524,10 +568,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         return files;
     }
 
-    async function selectChallenge(difficulty, challenge) {
+    async function selectChallenge(difficulty, challenge, preferredFileName = null) {
         currentDifficulty = difficulty;
         currentChallenge = challenge;
         selectedLine = null;
+        saveOpenState(preferredFileName);
 
         updateActiveNavigation();
         updateProgress();
@@ -574,7 +619,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            renderFileTabs(files);
+            renderFileTabs(files, preferredFileName);
         } catch (error) {
             elements.editorBody.replaceChildren();
 
@@ -792,13 +837,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        const firstDifficulty = Object.keys(challengesByDifficulty).find(
-            (difficulty) => challengesByDifficulty[difficulty].length > 0
+        const savedChallenge = savedOpenState
+            ? allChallenges.find((challenge) => challenge.id === savedOpenState.challengeId)
+            : null;
+
+        const initialChallenge = savedChallenge || allChallenges[0];
+
+        const initialDifficulty = Object.keys(challengesByDifficulty).find(
+            (difficulty) => (challengesByDifficulty[difficulty] || []).some(
+                (challenge) => challenge.id === initialChallenge.id
+            )
         );
 
         selectChallenge(
-            firstDifficulty,
-            challengesByDifficulty[firstDifficulty][0]
+            initialDifficulty,
+            initialChallenge,
+            savedChallenge ? savedOpenState.fileName : null
         );
 
     } catch (error) {

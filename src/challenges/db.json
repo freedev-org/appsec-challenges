@@ -30,6 +30,18 @@
             "files": {
                 "User.php": "challenges/hello-database/User.php"
             }
+        },
+        {
+            "id": "hello-cwe",
+            "title": "Olá, CWE!",
+            "description": "Parece que este código tem uma vulnerabilidade. Use o Google ou outros meios necessários para descobrir qual é o ID da Common Weakness Enumeration (CWE) desta vulnerabilidade, então envie sua resposta com o CWE dela. Exemplo: CWE-123",
+            "explanation": "Common Weakness Enumeration (CWE) é um projeto que se propõe a ser um um sistema de identificação e categorização de diversos tipos de vulnerabilidades em software e hardware. Cada tipo de vulnerabilidade recebe um identificador único (como #CWE-259) com uma página que descreve a vulnerabilidade.",
+            "language": "JavaScript",
+            "type": "text",
+            "answer": "CWE-259",
+            "files": {
+                "login.js": "challenges/hello-cwe/login.js"
+            }
         }
     ],
     "easy": [

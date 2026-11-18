@@ -18,6 +18,18 @@
             "files": {
                 "index.php": "challenges/hello-world/index.php"
             }
+        },
+        {
+            "id": "hello-database",
+            "title": "Olá, banco de dados!",
+            "description": "Parece que este código está tentando se comunicar com um banco de dados SQL. Será que você consegue encontrar uma vulnerabilidade em potencial? Clique na linha principal onde a vulnerabilidade pode ocorrer para selecioná-la, então envie sua resposta.",
+            "explanation": "Essa é uma vulnerabilidade de [[Injeção de SQL|SQL injection]] (SQLi) identificada como #CWE-89 e se enquadra na OWASP top 10 como owasp{A05:2025 Injection}. Como o input do usuário está sendo concatenado na query SQL diretamente, ele possivelmente poderia fechar a string do campo email inserindo um caractere `'` e, após isso, injetar comandos SQL que seriam executados no banco de dados. Potenciais impactos de segurança seriam: exfiltração de dados no banco, alteração e/ou exclusão de dados e, no pior dos casos, até mesmo a execução remota de código dependendo de como o banco de dados estiver configurado.",
+            "language": "PHP",
+            "type": "line",
+            "answer": "User.php:22",
+            "files": {
+                "User.php": "challenges/hello-database/User.php"
+            }
         }
     ],
     "easy": [

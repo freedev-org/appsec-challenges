@@ -34,13 +34,25 @@
         {
             "id": "hello-cwe",
             "title": "Olá, CWE!",
-            "description": "Parece que este código tem uma vulnerabilidade. Use o Google ou outros meios necessários para descobrir qual é o ID da Common Weakness Enumeration (CWE) desta vulnerabilidade, então envie sua resposta com o CWE dela. Exemplo: CWE-123",
+            "description": "Parece que este código tem uma vulnerabilidade. Use o Google ou outros meios necessários para descobrir qual é o ID da Common Weakness Enumeration (CWE) desta vulnerabilidade, então envie sua resposta com o CWE dela. Exemplo: `CWE-123`",
             "explanation": "Common Weakness Enumeration (CWE) é um projeto que se propõe a ser um um sistema de identificação e categorização de diversos tipos de vulnerabilidades em software e hardware. Cada tipo de vulnerabilidade recebe um identificador único (como #CWE-259) com uma página que descreve a vulnerabilidade.",
             "language": "JavaScript",
             "type": "text",
             "answer": "CWE-259",
             "files": {
-                "login.js": "challenges/very-easy/hello-cwe/login.js"
+                "login.js": "challenges/very-easy/hello-cwe-and-top10/login.js"
+            }
+        },
+        {
+            "id": "hello-owasp-top10",
+            "title": "Olá, OWASP Top 10!",
+            "description": "Parece que este código tem uma vulnerabilidade. Descubra em qual categoria da OWASP Top 10 de 2025 essa vulnerabilidade se enquadra, então responda com o identificador único da categoria. Exemplo: `A01:2025 Broken Access Control`",
+            "explanation": "OWASP Top 10 é um projeto da OWASP (owasp.org) que agrupa as falhas de segurança mais comuns em aplicações web em 10 categorias, ordenando a partir da categoria de falhas de segurança mais comum.",
+            "language": "JavaScript",
+            "type": "text",
+            "answer": "A07:2025 Authentication Failures",
+            "files": {
+                "login.js": "challenges/very-easy/hello-cwe-and-top10/login.js"
             }
         }
     ],

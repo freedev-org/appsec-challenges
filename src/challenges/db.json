@@ -16,7 +16,7 @@
             ],
             "answer": 4,
             "files": {
-                "index.php": "challenges/hello-world/index.php"
+                "index.php": "challenges/very-easy/hello-world/index.php"
             }
         },
         {
@@ -28,7 +28,7 @@
             "type": "line",
             "answer": "User.php:22",
             "files": {
-                "User.php": "challenges/hello-database/User.php"
+                "User.php": "challenges/very-easy/hello-database/User.php"
             }
         },
         {
@@ -40,7 +40,7 @@
             "type": "text",
             "answer": "CWE-259",
             "files": {
-                "login.js": "challenges/hello-cwe/login.js"
+                "login.js": "challenges/very-easy/hello-cwe/login.js"
             }
         }
     ],
@@ -54,9 +54,9 @@
             "type": "line",
             "answer": "frontend.js:17",
             "files": {
-                "user.js": "challenges/baby-step/user.js",
-                "frontend.js": "challenges/baby-step/frontend.js",
-                "user.html": "challenges/baby-step/user.html"
+                "user.js": "challenges/easy/baby-step/user.js",
+                "frontend.js": "challenges/easy/baby-step/frontend.js",
+                "user.html": "challenges/easy/baby-step/user.html"
             }
         }
     ],

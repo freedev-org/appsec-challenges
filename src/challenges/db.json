@@ -66,6 +66,25 @@
             "files": {
                 "file.js": "challenges/very-easy/hello-cwe-and-top10/file.js"
             }
+        },
+        {
+            "id": "hello-binary",
+            "title": "Olá, binário!",
+            "description": "Este programa em C tem uma vulnerabilidade. Você sabe dizer qual é o tipo de vulnerabilidade?",
+            "explanation": "Uma vulnerabilidade de stack-based buffer overflow (#CWE-121) ocorre quando um input de buffer controlável pelo usuário consegue escrever dados em um buffer na pilha além do seu tamanho pré-alocado, sobrescrevendo outros dados na pilha. Possíveis impactos: sobrescrita de dados importantes que também estejam na pilha que possam alterar o comportamento do programa ou, no pior dos casos, execução remota de código no programa por meio da injeção e execução de um [[shellcode]].",
+            "language": "C",
+            "type": "choice",
+            "choices": [
+                "Stack-based buffer over-read",
+                "Stack-based buffer overflow",
+                "Integer overflow",
+                "Command injection",
+                "Heap-based buffer overflow"
+            ],
+            "answer": 2,
+            "files": {
+                "main.c": "challenges/very-easy/hello-binary/main.c"
+            }
         }
     ],
     "easy": [

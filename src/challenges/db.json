@@ -101,6 +101,19 @@
                 "frontend.js": "challenges/easy/baby-step/frontend.js",
                 "user.html": "challenges/easy/baby-step/user.html"
             }
+        },
+        {
+            "id": "sanitize",
+            "title": "Higienização",
+            "description": "O código abaixo parece estar fazendo higienização para evitar XSS. Ele até está evitando o pseudo-protocolo `javascript:` na URL... Você consegue ver uma vulnerabilidade em potencial aí? Clique na linha vulnerável para selecioná-la.",
+            "explanation": "A higienização contra XSS (#CWE-79) é insuficiente, pois um atacante poderia inserir uma aspa (`\"`) na URL e inserir um evento na tag `a` que permitiria a execução de código na página. Exemplo de URL maliciosa: `#\" onclick=\"alert(document.domain)`",
+            "language": "PHP",
+            "type": "line",
+            "answer": "user.php:17",
+            "files": {
+                "sanitize.php": "challenges/easy/sanitize/sanitize.php",
+                "user.php": "challenges/easy/sanitize/user.php"
+            }
         }
     ],
     "medium": [],

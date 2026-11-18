@@ -279,20 +279,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         function appendInlineCode(value) {
             const code = document.createElement('code');
             code.className = 'markup-inline-code';
-
-            // A linguagem não é informada no markup; tenta inferi-la pelo próprio trecho.
-            if (window.hljs && value.trim().length >= 3) {
-                try {
-                    const highlighted = hljs.highlightAuto(value);
-                    const template = document.createElement('template');
-                    template.innerHTML = highlighted.value;
-                    code.appendChild(template.content.cloneNode(true));
-                } catch (error) {
-                    code.textContent = value;
-                }
-            } else {
-                code.textContent = value;
-            }
+            code.textContent = value;
 
             container.appendChild(code);
         }

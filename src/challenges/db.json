@@ -54,6 +54,18 @@
             "files": {
                 "login.js": "challenges/very-easy/hello-cwe-and-top10/login.js"
             }
+        },
+        {
+            "id": "hello-owasp-api-top10",
+            "title": "Olá, OWASP API Security Top 10!",
+            "description": "Parece que este endpoint de API tem uma vulnerabilidade. Descubra em qual categoria da OWASP API Security Top 10 de 2023 essa vulnerabilidade se enquadra, então responda com o identificador único da categoria. Exemplo: `API7:2023 Server Side Request Forgery`",
+            "explanation": "OWASP API Security Top 10 é um projeto da OWASP (owasp.org) que agrupa as falhas de segurança mais comuns em APIs web em 10 categorias, ordenando a partir da categoria de falhas de segurança mais comum.",
+            "language": "JavaScript",
+            "type": "text",
+            "answer": "API1:2023 Broken Object Level Authorization",
+            "files": {
+                "file.js": "challenges/very-easy/hello-cwe-and-top10/file.js"
+            }
         }
     ],
     "easy": [

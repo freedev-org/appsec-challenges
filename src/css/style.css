@@ -31,6 +31,8 @@
 
 body {
     font-family: 'Inter', sans-serif;
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
     background: var(--background);
     color: var(--text);
     font-size: 13px;
@@ -1010,7 +1012,8 @@ input {
 
 
 /* Links gerados pelo markup dos desafios */
-#challenge-description a, .explanation-modal-body a {
+#challenge-description a,
+.explanation-modal-body a {
     color: var(--primary);
     font-weight: 500;
     text-decoration: none;
@@ -1023,7 +1026,8 @@ input {
     vertical-align: 0.12em;
 }
 
-#challenge-description a:hover, .explanation-modal-body a:hover {
+#challenge-description a:hover,
+.explanation-modal-body a:hover {
     text-decoration: underline;
 }
 
@@ -1137,9 +1141,19 @@ input {
 }
 
 @media (max-width: 600px) {
-    .explanation-modal { padding: 14px; }
-    .explanation-modal-header, .explanation-modal-body { padding-left: 18px; padding-right: 18px; }
-    .explanation-modal-footer { padding: 13px 18px; }
+    .explanation-modal {
+        padding: 14px;
+    }
+
+    .explanation-modal-header,
+    .explanation-modal-body {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .explanation-modal-footer {
+        padding: 13px 18px;
+    }
 }
 
 /* =========================================

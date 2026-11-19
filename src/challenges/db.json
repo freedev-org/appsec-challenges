@@ -35,7 +35,7 @@
             "id": "hello-cwe",
             "title": "Olá, CWE!",
             "description": "Parece que este código tem uma vulnerabilidade. Use o Google ou outros meios necessários para descobrir qual é o ID da Common Weakness Enumeration (CWE) desta vulnerabilidade, então envie sua resposta com o CWE dela. Exemplo: `CWE-123`",
-            "explanation": "Common Weakness Enumeration (CWE) é um projeto que se propõe a ser um um sistema de identificação e categorização de diversos tipos de vulnerabilidades em software e hardware. Cada tipo de vulnerabilidade recebe um identificador único (como #CWE-259) com uma página que descreve a vulnerabilidade.",
+            "explanation": "[[Common Weakness Enumeration]] (CWE) é um projeto que se propõe a ser um um sistema de identificação e categorização de diversos tipos de vulnerabilidades em software e hardware. Cada tipo de vulnerabilidade recebe um identificador único (como #CWE-259) com uma página que descreve a vulnerabilidade.",
             "language": "JavaScript",
             "type": "text",
             "answer": "CWE-259",
@@ -113,6 +113,18 @@
             "files": {
                 "sanitize.php": "challenges/easy/sanitize/sanitize.php",
                 "user.php": "challenges/easy/sanitize/user.php"
+            }
+        },
+        {
+            "id": "find",
+            "title": "Busca",
+            "description": "Este código é só um endpoint de busca simples... Será que tem uma vulnerabilidade nele? Clique na linha vulnerável para selecioná-la.",
+            "explanation": "Essa é uma vulnerabilidade conhecida como ReDoS (#CWE-1333). Expressões regulares malformadas podem usar muitos recursos da máquina e até mesmo travar o servidor. Quando um atacante consegue manipular uma expressão regular executada no servidor, ele pode propositalmente enviar uma expressão regular malformada para fazer um [[ataque de negação de serviço]] e tirar o servidor do ar. Exemplo de expressão regular que causa lentidão: `(((((((.*)*)*)*)*)*)*)\\.`",
+            "language": "Python",
+            "type": "line",
+            "answer": "app.py:15",
+            "files": {
+                "app.py": "challenges/easy/find/app.py"
             }
         }
     ],

@@ -223,8 +223,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 item.appendChild(createIcon(statusIcon));
 
                 const title = document.createElement('span');
+                title.className = 'challenge-item-title';
                 title.textContent = challenge.title;
                 item.appendChild(title);
+
+                if (typeof challenge.language === 'string' && challenge.language.trim()) {
+                    const language = document.createElement('span');
+                    language.className = 'challenge-language-tag';
+
+                    const languageIcon = createIcon(getLanguageIcon(challenge.language));
+                    languageIcon.setAttribute('aria-hidden', 'true');
+
+                    language.append(languageIcon);
+                    language.title = challenge.language.trim();
+                    item.appendChild(language);
+                }
 
                 if (currentChallenge && currentChallenge.id === challenge.id) {
                     item.classList.add('active');
@@ -423,13 +436,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function getLanguageIcon(language) {
-        const normalized = String(language || '').toLowerCase();
+        const normalized = String(language || '').toLowerCase().trim();
 
         if (normalized === 'python') return 'fa-brands fa-python';
         if (normalized === 'javascript' || normalized === 'js') return 'fa-brands fa-js';
         if (normalized === 'typescript' || normalized === 'ts') return 'fa-brands fa-js';
         if (normalized === 'html') return 'fa-brands fa-html5';
         if (normalized === 'css') return 'fa-brands fa-css3-alt';
+        if (normalized === 'php') return 'fa-brands fa-php';
+        if (normalized === 'rust') return 'fa-brands fa-rust';
+        if (normalized === 'c') return 'fa-solid fa-c';
+        if (normalized === 'go' || normalized === 'golang') return 'fa-brands fa-golang';
 
         return 'fa-solid fa-file-code';
     }

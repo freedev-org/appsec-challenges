@@ -128,6 +128,20 @@
             }
         }
     ],
-    "medium": [],
+    "medium": [
+        {
+            "id": "user-login",
+            "title": "Login de usuário",
+            "description": "Parece um simples fluxo de login de usuário... Será que você consegue encontrar uma vulnerabilidade aí?",
+            "explanation": "Essa vulnerabilidade é conhecida como type juggling e poderia se enquadrar na #CWE-1287 ou #CWE-704. Ela ocorre porque os operadores `==` e `!=` do PHP fazem uma conversão implícita de tipos nos valores comparados. Por isso, se o usuário inserir um booleano `true` como OTP ao invés de uma string, como esperado, a engine do PHP irá comparar booleano com string que, por regra, ele irá converter a string em booleano e, também por regra, strings não vazias são consideradas `true`. Ou seja, o efeito é o mesmo que comparar `true != true`, que irá resultar sempre em falso.",
+            "language": "PHP",
+            "type": "line",
+            "answer": "LoginController.php:51",
+            "files": {
+                "LoginController.php": "challenges/medium/user-login/LoginController.php",
+                "User.php": "challenges/medium/user-login/User.php"
+            }
+        }
+    ],
     "hard": []
 }
